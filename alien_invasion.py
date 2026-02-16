@@ -3,6 +3,7 @@ import pygame
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 class AlienInvasion:
     """Clase general para gestionar los recursos y el comportamiento
@@ -23,7 +24,8 @@ class AlienInvasion:
         pygame.display.set_caption("Alien Invasion")
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
-
+        self.aliens = pygame.sprite.Group()
+        self._create_fleet()
 
     def run_game(self):
         """Inicia el bucle principal para el juego."""
@@ -32,6 +34,7 @@ class AlienInvasion:
             self._check_events()
             self.ship.update()
             self._update_bullets()
+            self._update_aliens()
             self._update_screen()
             self.clock.tick(60)
      
@@ -69,7 +72,49 @@ class AlienInvasion:
         for bullet in self.bullets:
             bullet.draw_bullet()
         self.ship.blitme()
+        self.aliens.draw(self.screen)
         pygame.display.flip()
+
+    def _create_fleet(self):
+        """Crea la flota de aliens"""
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+
+        currentx, currenty = alien_width, alien_height
+        while currenty < (self.settings.screen_height - 3*alien_height):
+            while currentx < (self.settings.screen_width - 2*alien_width):
+                self._create_alien(currentx, currenty)
+                currentx += 2*alien_width
+            currentx = alien_width
+            currenty += alien_height*2
+
+    def _create_alien(self, x_position, y_position):
+        """Crea un alienígena y lo coloca en la fila."""
+        new_alien = Alien(self)
+        new_alien.x = x_position
+        new_alien.rect.x = x_position
+        new_alien.rect.y = y_position
+        self.aliens.add(new_alien)
+
+    def _check_fleet_edges(self):
+        """Responde adecuadamente si algún alien ha llegado a un
+        borde."""
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self):
+        """Baja toda la flota y cambia su dirección."""
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+
+    def _update_aliens(self):
+        """Comprueba si la flota está en un borde, después actualiza las
+        posiciones."""
+        self._check_fleet_edges()
+        self.aliens.update()
 
     def _fire_bullet(self):
         """Crea una nueva bala y la añade al grupo de balas."""
