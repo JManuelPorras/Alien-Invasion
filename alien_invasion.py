@@ -1,9 +1,13 @@
 import sys
+from time import sleep
+
 import pygame
+
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+from game_stats import GameStats
 
 class AlienInvasion:
     """Clase general para gestionar los recursos y el comportamiento
@@ -22,6 +26,7 @@ class AlienInvasion:
         else:
             self.screen = pygame.display.set_mode((self.settings.screen_width , self.settings.screen_height))
         pygame.display.set_caption("Alien Invasion")
+        self.stats = GameStats(self)
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
@@ -115,6 +120,25 @@ class AlienInvasion:
         posiciones."""
         self._check_fleet_edges()
         self.aliens.update()
+        # Busca colisiones alien-nave.
+        if pygame.sprite.spritecollideany(self.ship, self.aliens): # type: ignore
+            self._ship_hit()
+
+    def _ship_hit(self):
+        """Responde al impacto de un alien en la nave."""
+        # Disminuye ships_left.
+        self.stats.ships_left -= 1
+
+        # Se deshace de los aliens y balas restantes.
+        self.aliens.empty()
+        self.bullets.empty()
+
+        # Crea una flota nueva y centra la nave.
+        self._create_fleet()
+        self.ship.center_ship()
+
+        # Pausa.
+        sleep(0.5)
 
     def _fire_bullet(self):
         """Crea una nueva bala y la añade al grupo de balas."""
