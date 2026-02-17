@@ -34,7 +34,7 @@ class Settings:
         """Inicializa las configuraciones que cambian durante el juego."""
         self.ship_speed = 2
         self.bullet_speed = 3
-        self.alien_speed = 1.5
+        self.alien_speed = 1.5 # estaba en 1.5
         # fleet_direction de 1 representa la derecha; -1 representa la izquierda.
         self.fleet_direction = 1
         # Configuración de puntuación

@@ -18,6 +18,7 @@ class AlienInvasion:
     def __init__(self):
         """Inicializa el juego y crea recursos."""
         pygame.init()
+        pygame.mixer.init()
 
         self.settings = Settings()
         self.clock = pygame.time.Clock()
@@ -28,6 +29,10 @@ class AlienInvasion:
         else:
             self.screen = pygame.display.set_mode((self.settings.screen_width , self.settings.screen_height))
         pygame.display.set_caption("Alien Invasion")
+
+        # Cargar sonidos
+        self._load_sounds()
+
         self.stats = GameStats(self)
         self.sb = Scoreboard(self)
         self.ship = Ship(self)
@@ -36,6 +41,15 @@ class AlienInvasion:
         self._create_fleet()
         self.game_active = False
         self.play_button = Button(self, "Play")
+
+    def _load_sounds(self):
+        """Carga la música y los efectos de sonido."""
+        pygame.mixer.music.load('sounds/background.mp3')
+        pygame.mixer.music.set_volume(0.5)
+        
+        self.laser_sound = pygame.mixer.Sound('sounds/laser.wav')
+        self.explosion_sound = pygame.mixer.Sound('sounds/explosion.wav')
+        self.explosion_sound.set_volume(1.0)
 
     def run_game(self):
         """Inicia el bucle principal para el juego."""
@@ -77,6 +91,9 @@ class AlienInvasion:
             self.sb.prep_level()
             self.sb.prep_ships()
             self.game_active = True
+
+            # Reproducir música de fondo
+            pygame.mixer.music.play(-1)
 
             # Se deshace de los aliens y las balas que quedan.
             self.aliens.empty()
@@ -175,6 +192,9 @@ class AlienInvasion:
 
     def _ship_hit(self):
         """Responde al impacto de un alien en la nave."""
+        # Se reproduce el sonido de explosión
+        self.explosion_sound.play()
+
         # Reduce ships_left y actualiza el marcador.
         self.stats.ships_left -= 1
         self.sb.prep_ships()
@@ -193,12 +213,15 @@ class AlienInvasion:
         else:
             self.game_active = False
             pygame.mouse.set_visible(True)
+            # Detener la música de fondo al perder
+            pygame.mixer.music.stop()
 
     def _fire_bullet(self):
         """Crea una nueva bala y la añade al grupo de balas."""
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
+            self.laser_sound.play()
 
     def _update_bullets(self):
         """Actualiza la posición de las balas y se deshace de las viejas."""
