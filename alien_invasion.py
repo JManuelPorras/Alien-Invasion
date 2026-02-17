@@ -9,6 +9,7 @@ from bullet import Bullet
 from alien import Alien
 from game_stats import GameStats
 from button import Button
+from scoreboard import Scoreboard
 
 class AlienInvasion:
     """Clase general para gestionar los recursos y el comportamiento
@@ -28,6 +29,7 @@ class AlienInvasion:
             self.screen = pygame.display.set_mode((self.settings.screen_width , self.settings.screen_height))
         pygame.display.set_caption("Alien Invasion")
         self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
@@ -71,6 +73,9 @@ class AlienInvasion:
 
             # Restablece las estadísticas del juego.
             self.stats.reset_stats()
+            self.sb.prep_score()
+            self.sb.prep_level()
+            self.sb.prep_ships()
             self.game_active = True
 
             # Se deshace de los aliens y las balas que quedan.
@@ -109,6 +114,7 @@ class AlienInvasion:
             bullet.draw_bullet()
         self.ship.blitme()
         self.aliens.draw(self.screen)
+        self.sb.show_score()
         if not self.game_active:
             self.play_button.draw_button()
         pygame.display.flip()
@@ -169,8 +175,9 @@ class AlienInvasion:
 
     def _ship_hit(self):
         """Responde al impacto de un alien en la nave."""
-        # Disminuye ships_left.
+        # Reduce ships_left y actualiza el marcador.
         self.stats.ships_left -= 1
+        self.sb.prep_ships()
 
         if self.stats.ships_left > 0:
             # Se deshace de los aliens y balas restantes.
@@ -209,11 +216,20 @@ class AlienInvasion:
         # Si hay, se deshace de la bala y del alien.
         collisions = pygame.sprite.groupcollide(
         self.bullets, self.aliens, True, True)
+        if collisions:
+            for aliens in collisions.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+            self.sb.prep_score()
+            self.sb.check_high_score()
         if not self.aliens:
             # Destruye las balas existentes y crea una flota nueva.
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
+
+            # Aumenta el nivel.
+            self.stats.level += 1
+            self.sb.prep_level()
 
 if __name__ == '__main__':
     # Hace una instancia del juego y lo ejecuta.
