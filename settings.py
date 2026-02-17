@@ -8,10 +8,10 @@ class Settings:
         self.screen_width = 1000
         self.screen_height = 500
         self.bg_color = (230, 230, 230)
-        self.fullscreen = True
+        self.fullscreen = False
 
         # Configuración de las balas.
-        self.bullet_width = 3000 # estaba en 3
+        self.bullet_width = 3 # estaba en 3
         self.bullet_height = 15
         self.bullet_color = (60, 60, 60)
         self.bullets_allowed = 3
@@ -23,15 +23,15 @@ class Settings:
         self.ship_limit = 3
 
         # Rapidez con la que se acelera el juego
-        self.speedup_scale = 1.1
+        self.speedup_scale = 1.2
 
         self.initialize_dynamic_settings()
 
     def initialize_dynamic_settings(self):
         """Inicializa las configuraciones que cambian durante el juego."""
-        self.ship_speed = 1.5
-        self.bullet_speed = 2.5
-        self.alien_speed = 1.0
+        self.ship_speed = 2
+        self.bullet_speed = 3
+        self.alien_speed = 1.5
         # fleet_direction de 1 representa la derecha; -1 representa la izquierda.
         self.fleet_direction = 1
 
