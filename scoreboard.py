@@ -1,5 +1,6 @@
 import pygame.font
 from pygame.sprite import Group
+import json
 
 from ship import Ship
 
@@ -60,6 +61,7 @@ class Scoreboard:
         if self.stats.score > self.stats.high_score:
             self.stats.high_score = self.stats.score
             self.prep_high_score()
+            self.stats.save_high_score()
 
     def prep_level(self):
         """Convierte el nivel en una imagen renderizada."""
