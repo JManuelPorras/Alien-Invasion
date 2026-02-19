@@ -1,1 +1,10 @@
 __pycache__/
+build/
+dist/
+.venv/
+*.pyc
+*.pyo
+*.pyd
+.idea/
+.vscode/
+*.spec

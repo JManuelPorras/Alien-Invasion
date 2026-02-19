@@ -10,6 +10,7 @@ from alien import Alien
 from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
+from resource_helper import resource_path
 
 class AlienInvasion:
     """Clase general para gestionar los recursos y el comportamiento
@@ -44,11 +45,11 @@ class AlienInvasion:
 
     def _load_sounds(self):
         """Carga la música y los efectos de sonido."""
-        pygame.mixer.music.load('sounds/background.mp3')
+        pygame.mixer.music.load(resource_path('sounds/background.mp3'))
         pygame.mixer.music.set_volume(0.5)
         
-        self.laser_sound = pygame.mixer.Sound('sounds/laser.wav')
-        self.explosion_sound = pygame.mixer.Sound('sounds/explosion.wav')
+        self.laser_sound = pygame.mixer.Sound(resource_path('sounds/laser.wav'))
+        self.explosion_sound = pygame.mixer.Sound(resource_path('sounds/explosion.wav'))
         self.explosion_sound.set_volume(1.0)
 
     def run_game(self):

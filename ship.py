@@ -1,5 +1,6 @@
 import pygame
 from pygame.sprite import Sprite
+from resource_helper import resource_path
 
 class Ship(Sprite):
     """Una clase para gestionar la nave."""
@@ -12,7 +13,7 @@ class Ship(Sprite):
         self.settings = ai_game.settings
 
         # Carga la imagen de la nave y obtiene su rect.
-        self.image = pygame.image.load('images/ship.bmp')
+        self.image = pygame.image.load(resource_path('images/ship.bmp'))
         self.rect = self.image.get_rect()
 
         # Coloca inicialmente cada nave nueva en el centro de la parte

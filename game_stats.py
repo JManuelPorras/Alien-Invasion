@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from resource_helper import persistent_path
 
 class GameStats:
     """Sigue las estadísticas de Alien Invasion."""
@@ -12,7 +13,7 @@ class GameStats:
 
     def load_high_score(self):
         """Carga la puntuación más alta desde un archivo JSON."""
-        path = Path('high_score.json')
+        path = Path(persistent_path('high_score.json'))
         try:
             if path.exists():
                 contents = path.read_text()
@@ -24,7 +25,7 @@ class GameStats:
 
     def save_high_score(self):
         """Guarda la puntuación más alta en un archivo JSON."""
-        path = Path('high_score.json')
+        path = Path(persistent_path('high_score.json'))
         contents = json.dumps(self.high_score)
         path.write_text(contents)
         
